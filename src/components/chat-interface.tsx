@@ -13,10 +13,10 @@ interface Message {
   sender: 'user' | 'ai';
 }
 
-// Gemini API key
-const GEMINI_API_KEY = "AIzaSyD-S1p0fQSePLvudq03su7iVdvaAuFTBTE";
-// Updated API URL to use the correct endpoint
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent";
+// Updated Gemini API key
+const GEMINI_API_KEY = "AIzaSyC2s1tUXi7vC-ed-isAuYgnrJk-Zg5238Y";
+// Updated API URL to use Gemini 2.0 Flash model
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent";
 
 // Function to get response from Gemini API
 const getGeminiResponse = async (userContext: string, message: string): Promise<string> => {
