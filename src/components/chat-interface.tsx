@@ -5,6 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 interface Message {
   id: string;
@@ -12,29 +13,62 @@ interface Message {
   sender: 'user' | 'ai';
 }
 
-const mockAIResponse = (message: string): Promise<string> => {
-  // This is a placeholder for the Gemini API integration
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      if (message.toLowerCase().includes("hello") || message.toLowerCase().includes("hi")) {
-        resolve("Hello! I'm your AI career counselor. How can I help with your career questions today?");
-      } else if (message.toLowerCase().includes("technology") || message.toLowerCase().includes("tech")) {
-        resolve("Technology is a vast field with many exciting opportunities! Based on your interests, I'd recommend exploring areas like software development, data science, cybersecurity, or UX design. What specific technologies or aspects of tech interest you most?");
-      } else if (message.toLowerCase().includes("science")) {
-        resolve("Science offers diverse career paths from research to applied fields. You could explore research in biology, chemistry, physics, or consider applied fields like healthcare, environmental science, or materials engineering. What area of science interests you most?");
-      } else if (message.toLowerCase().includes("medicine") || message.toLowerCase().includes("healthcare")) {
-        resolve("Medicine and healthcare offer rewarding careers with many specializations. Beyond becoming a doctor, you might consider nursing, pharmacy, physical therapy, medical research, healthcare administration, or health informatics. What aspects of healthcare interest you?");
-      } else if (message.toLowerCase().includes("art") || message.toLowerCase().includes("design")) {
-        resolve("Creative fields offer diverse opportunities! You could explore graphic design, UI/UX design, illustration, animation, fine art, photography, or art direction. Many of these fields have strong digital components today. What type of creative work appeals to you most?");
-      } else if (message.toLowerCase().includes("switch")) {
-        resolve("Switching careers can be challenging but rewarding! To make a successful transition, focus on transferable skills, consider additional education or certifications if needed, and network with professionals in your target field. What industry are you interested in switching to?");
-      } else if (message.toLowerCase().includes("upgrade") || message.toLowerCase().includes("advance")) {
-        resolve("To advance in your current career, focus on developing both technical and soft skills specific to your industry. Seek mentorship, take on challenging projects, and consider relevant certifications or advanced degrees. What specific role or position are you aiming for?");
-      } else {
-        resolve("Thank you for sharing. To provide more tailored advice, could you tell me more about your specific interests, skills, or any particular career paths you're considering?");
-      }
-    }, 1500);
-  });
+// Gemini API key
+const GEMINI_API_KEY = "AIzaSyD-S1p0fQSePLvudq03su7iVdvaAuFTBTE";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+
+// Function to get response from Gemini API
+const getGeminiResponse = async (userContext: string, message: string): Promise<string> => {
+  try {
+    const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: `You are an AI career counselor providing guidance based on the user's interests and career goals.
+                The user is interested in: ${userContext}.
+                
+                Please provide helpful, realistic career advice that can be implemented. Focus on specific career paths, 
+                education requirements, skills needed, and potential opportunities.
+                
+                User question: ${message}`
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Gemini API error:', errorText);
+      throw new Error(`Gemini API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    // Extract the response text from the Gemini API response
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && 
+        data.candidates[0].content.parts && data.candidates[0].content.parts[0]) {
+      return data.candidates[0].content.parts[0].text;
+    } else {
+      throw new Error('Unexpected response format from Gemini API');
+    }
+  } catch (error) {
+    console.error('Error getting Gemini response:', error);
+    return "I'm sorry, I encountered an error while processing your request. Please try again.";
+  }
 };
 
 interface ChatInterfaceProps {
@@ -47,7 +81,27 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [userContext, setUserContext] = useState('');
   
+  // Set user context based on user type and path
+  useEffect(() => {
+    let context = '';
+    
+    if (userType === 'student') {
+      context = userPath 
+        ? `A student interested in ${userPath}` 
+        : 'A student looking for general career guidance';
+    } else {
+      context = userPath === 'upgrade'
+        ? 'A professional looking to advance in their current career'
+        : userPath === 'switch'
+          ? 'A professional looking to switch to a new career field'
+          : 'A professional looking for general career guidance';
+    }
+    
+    setUserContext(context);
+  }, [userType, userPath]);
+
   // Initial greeting based on user type and path
   useEffect(() => {
     let greeting = '';
@@ -101,7 +155,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
     setIsLoading(true);
     
     try {
-      const response = await mockAIResponse(inputMessage);
+      const response = await getGeminiResponse(userContext, inputMessage);
       
       setMessages((prev) => [
         ...prev,
@@ -113,6 +167,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
       ]);
     } catch (error) {
       console.error('Error getting AI response:', error);
+      toast.error("Error connecting to the AI service. Please try again later.");
       setMessages((prev) => [
         ...prev,
         {
