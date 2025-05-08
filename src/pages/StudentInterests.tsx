@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Code, Flask, Stethoscope, Palette } from 'lucide-react';
+import { ArrowLeft, Code, Beaker, Stethoscope, Palette } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SelectionCard from '@/components/selection-card';
 import Logo from '@/components/logo';
@@ -43,7 +43,7 @@ const StudentInterests = () => {
           
           <SelectionCard
             title="Science"
-            icon={Flask}
+            icon={Beaker}
             color="bg-student"
             onClick={() => handleInterestSelect('Science')}
             className="border-student/20 hover:border-student"
