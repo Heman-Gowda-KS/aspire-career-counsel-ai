@@ -15,7 +15,8 @@ interface Message {
 
 // Gemini API key
 const GEMINI_API_KEY = "AIzaSyD-S1p0fQSePLvudq03su7iVdvaAuFTBTE";
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+// Updated API URL to use the correct endpoint
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent";
 
 // Function to get response from Gemini API
 const getGeminiResponse = async (userContext: string, message: string): Promise<string> => {
@@ -53,7 +54,7 @@ const getGeminiResponse = async (userContext: string, message: string): Promise<
     if (!response.ok) {
       const errorText = await response.text();
       console.error('Gemini API error:', errorText);
-      throw new Error(`Gemini API error: ${response.status}`);
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
     }
 
     const data = await response.json();
