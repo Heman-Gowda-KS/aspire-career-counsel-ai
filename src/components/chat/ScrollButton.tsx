@@ -14,15 +14,15 @@ const ScrollButton: React.FC<ScrollButtonProps> = ({ onClick }) => {
       size="icon"
       variant="outline"
       className={cn(
-        "absolute bottom-20 right-4 rounded-full opacity-0 shadow-md",
-        "hover:opacity-100 hover:shadow-lg hover:scale-110 hover:bg-primary hover:text-primary-foreground",
-        "transition-all duration-300 transform animate-bounce",
-        "opacity-80 bg-background border-primary"
+        "absolute bottom-20 right-4 rounded-full opacity-0 shadow-lg",
+        "hover:opacity-100 hover:shadow-xl hover:scale-110",
+        "transition-all duration-300 transform animate-pulse",
+        "opacity-90 bg-gradient-to-r from-indigo-400 to-purple-500 text-white border-none"
       )}
       onClick={onClick}
       aria-label="Scroll to bottom"
     >
-      <ChevronDown className="h-4 w-4" />
+      <ChevronDown className="h-5 w-5" />
     </Button>
   );
 };

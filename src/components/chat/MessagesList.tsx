@@ -13,12 +13,17 @@ interface MessagesListProps {
 
 const MessagesList: React.FC<MessagesListProps> = ({ messages, isLoading, userType, messagesEndRef }) => {
   return (
-    <div className="flex flex-col space-y-4">
-      {messages.map((message) => (
-        <MessageBubble key={message.id} message={message} userType={userType} />
-      ))}
+    <div className="flex flex-col space-y-4 w-full">
+      {messages && messages.length > 0 ? (
+        messages.map((message) => (
+          <MessageBubble key={message.id} message={message} userType={userType} />
+        ))
+      ) : (
+        <div className="text-center text-muted-foreground p-4">
+          No messages yet. Start a conversation!
+        </div>
+      )}
       {isLoading && <LoadingIndicator />}
-      {/* Invisible element to scroll to */}
       <div ref={messagesEndRef} />
     </div>
   );

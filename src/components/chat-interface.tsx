@@ -29,8 +29,10 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
 
   // Auto-scroll when messages change
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    if (messages && messages.length > 0) {
+      scrollToBottom();
+    }
+  }, [messages, scrollToBottom]);
   
   const handleSendMessage = async (inputMessage: string) => {
     const newUserMessage = {
@@ -77,7 +79,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
   };
   
   return (
-    <div className="flex flex-col h-full max-h-[600px] bg-background rounded-lg border relative">
+    <div className="flex flex-col h-full max-h-[600px] bg-gradient-to-b from-white to-gray-50 rounded-lg border border-indigo-100 shadow-lg relative overflow-hidden">
       <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
         <MessagesList 
           messages={messages} 
@@ -91,7 +93,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
         <ScrollButton onClick={() => scrollToBottom(true)} />
       )}
       
-      <div className="p-4 border-t">
+      <div className="p-4 border-t border-indigo-100 bg-white/50 backdrop-blur-sm">
         <MessageInput 
           onSendMessage={handleSendMessage} 
           isLoading={isLoading} 

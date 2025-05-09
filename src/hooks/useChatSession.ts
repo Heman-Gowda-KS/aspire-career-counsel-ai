@@ -76,6 +76,7 @@ export const useChatSession = ({ userType, userPath }: UseChatSessionProps) => {
             }));
             
             setMessages(formattedMessages);
+            console.log('Loaded messages:', formattedMessages);
           } else {
             // Add initial greeting for empty but existing session
             addInitialGreeting();
@@ -143,7 +144,7 @@ export const useChatSession = ({ userType, userPath }: UseChatSessionProps) => {
     }
     
     const initialMessage = {
-      id: '1',
+      id: Date.now().toString(),
       content: greeting,
       sender: 'ai' as const,
     };
