@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Send } from 'lucide-react';
+import { Send, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -83,6 +83,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [userContext, setUserContext] = useState('');
+  const [autoScroll, setAutoScroll] = useState(true);
+  const scrollViewportRef = useRef<HTMLDivElement | null>(null);
   
   // Set user context based on user type and path
   useEffect(() => {
@@ -134,13 +136,42 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
   
   // Auto-scroll to bottom when messages update
   useEffect(() => {
-    if (scrollAreaRef.current) {
+    if (scrollAreaRef.current && autoScroll) {
       const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
       if (scrollContainer) {
-        scrollContainer.scrollTop = scrollContainer.scrollHeight;
+        scrollViewportRef.current = scrollContainer as HTMLDivElement;
+        scrollToBottom();
       }
     }
   }, [messages]);
+  
+  // Function to handle scrolling to bottom
+  const scrollToBottom = () => {
+    if (scrollViewportRef.current) {
+      scrollViewportRef.current.scrollTop = scrollViewportRef.current.scrollHeight;
+    }
+  };
+  
+  // Detect manual scroll to disable auto-scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (scrollViewportRef.current) {
+        const { scrollTop, scrollHeight, clientHeight } = scrollViewportRef.current;
+        // If user scrolls up more than 100px, disable auto-scroll
+        setAutoScroll(scrollHeight - scrollTop - clientHeight < 100);
+      }
+    };
+    
+    if (scrollViewportRef.current) {
+      scrollViewportRef.current.addEventListener('scroll', handleScroll);
+    }
+    
+    return () => {
+      if (scrollViewportRef.current) {
+        scrollViewportRef.current.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, []);
   
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -154,6 +185,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
     setMessages((prev) => [...prev, newUserMessage]);
     setInputMessage('');
     setIsLoading(true);
+    setAutoScroll(true); // Enable auto-scroll when sending a new message
     
     try {
       const response = await getGeminiResponse(userContext, inputMessage);
@@ -183,7 +215,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
   };
   
   return (
-    <div className="flex flex-col h-full max-h-[600px] bg-background rounded-lg border">
+    <div className="flex flex-col h-full max-h-[600px] bg-background rounded-lg border relative">
       <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
         <div className="flex flex-col space-y-4">
           {messages.map((message) => (
@@ -212,6 +244,20 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
           )}
         </div>
       </ScrollArea>
+      
+      {!autoScroll && (
+        <Button
+          size="icon"
+          variant="outline"
+          className="absolute bottom-20 right-4 rounded-full opacity-80 hover:opacity-100"
+          onClick={() => {
+            scrollToBottom();
+            setAutoScroll(true);
+          }}
+        >
+          <ChevronDown className="h-4 w-4" />
+        </Button>
+      )}
       
       <div className="p-4 border-t">
         <form
