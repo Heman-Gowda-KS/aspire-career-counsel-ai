@@ -4,14 +4,29 @@ import { Button } from '@/components/ui/button';
 import Logo from '@/components/logo';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Compass, Lightbulb, Rocket } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleGetStarted = () => {
+    if (user) {
+      navigate('/user-type');
+    } else {
+      navigate('/auth');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted flex flex-col">
-      <header className="container mx-auto py-6">
+      <header className="container mx-auto py-6 flex justify-between items-center">
         <Logo />
+        {user && (
+          <Button variant="outline" onClick={() => navigate('/user-type')}>
+            Dashboard
+          </Button>
+        )}
       </header>
       
       <main className="flex-1 container mx-auto flex flex-col items-center justify-center px-4 md:px-6 text-center space-y-12 py-12">
@@ -25,9 +40,9 @@ const Home = () => {
           <Button 
             size="lg" 
             className="mt-4 text-lg px-8 py-6" 
-            onClick={() => navigate('/user-type')}
+            onClick={handleGetStarted}
           >
-            Get Started <ArrowRight className="ml-2 h-5 w-5" />
+            {user ? 'Continue' : 'Get Started'} <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
         
