@@ -2,6 +2,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface ScrollButtonProps {
   onClick: () => void;
@@ -12,7 +13,12 @@ const ScrollButton: React.FC<ScrollButtonProps> = ({ onClick }) => {
     <Button
       size="icon"
       variant="outline"
-      className="absolute bottom-20 right-4 rounded-full opacity-80 hover:opacity-100"
+      className={cn(
+        "absolute bottom-20 right-4 rounded-full opacity-0 shadow-md",
+        "hover:opacity-100 hover:shadow-lg hover:scale-110 hover:bg-primary hover:text-primary-foreground",
+        "transition-all duration-300 transform animate-bounce",
+        "opacity-80 bg-background border-primary"
+      )}
       onClick={onClick}
       aria-label="Scroll to bottom"
     >
