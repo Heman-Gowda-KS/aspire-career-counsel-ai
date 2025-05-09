@@ -123,8 +123,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
           .from('chat_sessions')
           .select('*')
           .eq('user_id', user.id)
-          .eq('context_type', userType)
-          .eq('context_path', userPath || '')
+          .eq('user_type', userType)
+          .eq('user_path', userPath || '')
           .order('created_at', { ascending: false })
           .limit(1);
           
@@ -139,7 +139,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
             .from('chat_messages')
             .select('*')
             .eq('session_id', existingSessions[0].id)
-            .order('timestamp', { ascending: true });
+            .order('created_at', { ascending: true });
             
           if (messagesError) throw messagesError;
           
@@ -148,8 +148,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
             const formattedMessages = sessionMessages.map(msg => ({
               id: msg.id,
               content: msg.content,
-              sender: msg.sender as 'user' | 'ai',
-              timestamp: msg.timestamp
+              sender: msg.sender as 'user' | 'ai'
             }));
             
             setMessages(formattedMessages);
@@ -163,8 +162,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
             .from('chat_sessions')
             .insert({
               user_id: user.id,
-              context_type: userType,
-              context_path: userPath || '',
+              user_type: userType,
+              user_path: userPath || '',
             })
             .select()
             .single();
