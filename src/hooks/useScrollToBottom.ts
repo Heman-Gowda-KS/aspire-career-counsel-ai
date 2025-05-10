@@ -10,10 +10,14 @@ export const useScrollToBottom = () => {
   // Get viewport reference
   useEffect(() => {
     if (scrollAreaRef.current) {
-      const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-      if (viewport) {
-        viewportRef.current = viewport as HTMLDivElement;
-      }
+      setTimeout(() => {
+        const viewport = scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+        if (viewport) {
+          viewportRef.current = viewport as HTMLDivElement;
+          // Initial scroll to bottom
+          scrollToBottom(true);
+        }
+      }, 200); // Small delay to ensure DOM is ready
     }
   }, []);
 
@@ -38,16 +42,17 @@ export const useScrollToBottom = () => {
       setAutoScroll(isNearBottom);
     };
     
-    if (viewportRef.current) {
-      viewportRef.current.addEventListener('scroll', handleScroll);
+    const currentViewport = viewportRef.current;
+    if (currentViewport) {
+      currentViewport.addEventListener('scroll', handleScroll);
     }
     
     return () => {
-      if (viewportRef.current) {
-        viewportRef.current.removeEventListener('scroll', handleScroll);
+      if (currentViewport) {
+        currentViewport.removeEventListener('scroll', handleScroll);
       }
     };
-  }, []);
+  }, [viewportRef.current]); // This ensures we re-attach if viewportRef changes
 
   return {
     scrollAreaRef,

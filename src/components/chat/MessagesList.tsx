@@ -13,7 +13,7 @@ interface MessagesListProps {
 
 const MessagesList: React.FC<MessagesListProps> = ({ messages, isLoading, userType, messagesEndRef }) => {
   return (
-    <div className="flex flex-col space-y-4 w-full">
+    <div className="flex flex-col space-y-4 w-full min-h-full">
       {messages && messages.length > 0 ? (
         messages.map((message) => (
           <MessageBubble key={message.id} message={message} userType={userType} />
@@ -24,7 +24,7 @@ const MessagesList: React.FC<MessagesListProps> = ({ messages, isLoading, userTy
         </div>
       )}
       {isLoading && <LoadingIndicator />}
-      <div ref={messagesEndRef} />
+      <div ref={messagesEndRef} className="h-4" /> {/* Extra space at the bottom */}
     </div>
   );
 };

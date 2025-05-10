@@ -21,7 +21,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, userType }) => {
         userType === 'professional' && message.sender === 'user' && "bg-gradient-to-r from-blue-500 to-cyan-400"
       )}
     >
-      {message.content}
+      <div className="whitespace-pre-wrap break-words">
+        {message.content}
+      </div>
     </div>
   );
 };

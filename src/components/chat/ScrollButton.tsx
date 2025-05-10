@@ -14,9 +14,9 @@ const ScrollButton: React.FC<ScrollButtonProps> = ({ onClick }) => {
       size="icon"
       variant="outline"
       className={cn(
-        "absolute bottom-20 right-4 rounded-full opacity-0 shadow-lg",
-        "hover:opacity-100 hover:shadow-xl hover:scale-110",
-        "transition-all duration-300 transform animate-pulse",
+        "absolute bottom-20 right-4 rounded-full shadow-lg z-10",
+        "hover:shadow-xl hover:scale-110",
+        "transition-all duration-300 transform animate-bounce",
         "opacity-90 bg-gradient-to-r from-indigo-400 to-purple-500 text-white border-none"
       )}
       onClick={onClick}

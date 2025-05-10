@@ -76,7 +76,7 @@ export const useChatSession = ({ userType, userPath }: UseChatSessionProps) => {
             }));
             
             setMessages(formattedMessages);
-            console.log('Loaded messages:', formattedMessages);
+            console.log('Loaded messages:', formattedMessages.length);
           } else {
             // Add initial greeting for empty but existing session
             addInitialGreeting();

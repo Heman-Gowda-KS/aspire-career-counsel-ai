@@ -3,8 +3,8 @@ import React from 'react';
 
 const LoadingIndicator: React.FC = () => {
   return (
-    <div className="flex mr-auto bg-muted max-w-[80%] rounded-lg p-4 shadow-lg">
-      <div className="flex space-x-2">
+    <div className="flex mr-auto bg-muted max-w-[80%] rounded-lg p-4 shadow-lg animate-pulse">
+      <div className="flex space-x-3">
         <div 
           className="h-3 w-3 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 animate-bounce" 
           style={{ animationDelay: '0ms' }}

@@ -79,8 +79,8 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ userType, userPath }) => 
   };
   
   return (
-    <div className="flex flex-col h-full max-h-[600px] bg-gradient-to-b from-white to-gray-50 rounded-lg border border-indigo-100 shadow-lg relative overflow-hidden">
-      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
+    <div className="flex flex-col h-[600px] bg-gradient-to-b from-white to-gray-50 rounded-lg border border-indigo-100 shadow-lg relative overflow-hidden">
+      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto h-full">
         <MessagesList 
           messages={messages} 
           isLoading={isLoading} 
